@@ -26,6 +26,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -143,7 +144,7 @@ class HandlerService : FirebaseMessagingService() {
             )
             .setContentIntent(PendingIntent.getActivity(
                 this,
-                0,
+                payload["timestamp"]?.jsonPrimitive?.intOrNull ?: 0,
                 Intent(this, MainActivity::class.java).apply {
                     putExtra("channel_id", message.channel)
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP

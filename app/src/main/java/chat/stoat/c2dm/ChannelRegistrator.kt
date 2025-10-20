@@ -48,7 +48,7 @@ class ChannelRegistrator(val context: Context) {
             NotificationChannel(
                 CHANNEL_ID_GROUP_SOCIAL_FRIENDREQUESTS,
                 context.getString(R.string.notification_channel_friend_requests),
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 group = CHANNEL_ID_GROUP_SOCIAL
                 description =
