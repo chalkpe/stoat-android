@@ -2,6 +2,7 @@ package chat.stoat.activities
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
@@ -87,6 +88,8 @@ import chat.stoat.api.settings.Experiments
 import chat.stoat.api.settings.GeoStateProvider
 import chat.stoat.api.settings.LoadedSettings
 import chat.stoat.api.settings.SyncedSettings
+import chat.stoat.callbacks.Action
+import chat.stoat.callbacks.ActionChannel
 import chat.stoat.composables.generic.HealthAlert
 import chat.stoat.composables.voice.VoicePermissionSwitch
 import chat.stoat.composables.voice.VoiceSheet
@@ -97,6 +100,7 @@ import chat.stoat.screens.DefaultDestinationScreen
 import chat.stoat.screens.about.AboutScreen
 import chat.stoat.screens.about.AttributionScreen
 import chat.stoat.screens.chat.ChatRouterScreen
+import chat.stoat.screens.chat.ChatRouterViewModel
 import chat.stoat.screens.chat.views.channel.ChannelScreen
 import chat.stoat.screens.create.CreateGroupScreen
 import chat.stoat.screens.labs.LabsRootScreen
@@ -139,7 +143,12 @@ class MainActivityViewModel @Inject constructor(
     private val kvStorage: KVStorage,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
+    private var intent: Intent? = null
     val nextDestination = MutableStateFlow<String?>(null)
+    
+    fun setIntent(intent: Intent) {
+        this.intent = intent
+    }
     var isConnected = MutableStateFlow(false)
     val isReady = MutableStateFlow(false)
     val couldNotLogIn = MutableStateFlow(false)
@@ -261,6 +270,11 @@ class MainActivityViewModel @Inject constructor(
                         startWithDestination("main")
                     } else {
                         startWithDestination("chat")
+                        val channelId = intent?.getStringExtra("channel_id")
+                        if (channelId != null) {
+                            kvStorage.set("currentDestination", "channel/$channelId")
+                            viewModelScope.launch { ActionChannel.send(Action.SwitchChannel(channelId)) }
+                        }
                     }
                 } catch (e: Exception) {
                     Log.e("MainActivity", "Failed to login, could not log in", e)
@@ -345,6 +359,26 @@ class MainActivity : AppCompatActivity() {
         window.statusBarColor = Color.Transparent.toArgb()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        Log.d("MainActivity", "onNewIntent called")
+        intent.let {
+            setIntent(it)
+            viewModel.setIntent(it)
+            handleNotificationIntent(it)
+        }
+    }
+
+    private fun handleNotificationIntent(intent: Intent) {
+        val channelId = intent.getStringExtra("channel_id")
+        if (channelId != null) {
+            Log.d("MainActivity", "Handling notification intent for channel: $channelId")
+            viewModel.viewModelScope.launch {
+                ActionChannel.send(Action.SwitchChannel(channelId))
+            }
+        }
+    }
+
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -359,6 +393,7 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         StoatAPI.hydrateFromPersistentCache()
+        viewModel.setIntent(intent)
 
         setContent {
             val windowSizeClass = calculateWindowSizeClass(this)

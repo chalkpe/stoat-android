@@ -114,6 +114,7 @@ android {
                 "FLAVOUR_ID",
                 "\"${buildproperty("build.flavour_id", "RVX_BUILD_FLAVOUR_ID")}\""
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
 
         debug {

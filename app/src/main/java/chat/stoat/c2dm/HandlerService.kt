@@ -127,27 +127,8 @@ class HandlerService : FirebaseMessagingService() {
             return
         }
 
-        val remoteInput = RemoteInput.Builder("content").run {
-            setLabel(getString(R.string.message_context_sheet_actions_reply))
-            build()
-        }
-
-        val action: NotificationCompat.Action =
-            NotificationCompat.Action.Builder(
-                R.drawable.icn_reply_24dp,
-                getString(R.string.message_context_sheet_actions_reply),
-                PendingIntent.getActivity(
-                    this,
-                    0,
-                    Intent(this, MainActivity::class.java),
-                    PendingIntent.FLAG_MUTABLE
-                )
-            )
-                .addRemoteInput(remoteInput)
-                .build()
-
         val builder = NotificationCompat.Builder(this, CHANNEL_ID_GROUP_SOCIAL_FRIENDREQUESTS)
-            .setSmallIcon(R.drawable.icn_chat_24dp)
+            .setSmallIcon(R.drawable.ic_push_star)
             .setContentTitle(user.displayName ?: user.username)
             .setContentText(message.content)
             .setCategory(NotificationCompat.CATEGORY_MESSAGE)
@@ -160,8 +141,17 @@ class HandlerService : FirebaseMessagingService() {
                         author
                     )
             )
-            .addAction(action)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(PendingIntent.getActivity(
+                this,
+                0,
+                Intent(this, MainActivity::class.java).apply {
+                    putExtra("channel_id", message.channel)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            ))
+            .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         NotificationManagerCompat.from(this).apply {
             if (ActivityCompat.checkSelfPermission(
