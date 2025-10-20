@@ -348,9 +348,9 @@ fun Message(
                         UserAvatarWidthPlaceholder()
                     }
 
-                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                    Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
                         if (message.tail == false) {
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(7.dp))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
@@ -446,6 +446,7 @@ fun Message(
                                     ) {
                                         Spacer(modifier = Modifier.height(2.dp))
                                         JBMRenderer(message.content)
+                                        Spacer(modifier = Modifier.height(2.dp))
                                     }
                                 } else {
                                     CompositionLocalProvider(
@@ -461,6 +462,7 @@ fun Message(
                                     ) {
                                         Spacer(modifier = Modifier.height(2.dp))
                                         RichMarkdown(input = message.content)
+                                        Spacer(modifier = Modifier.height(2.dp))
                                     }
                                 }
                             }
