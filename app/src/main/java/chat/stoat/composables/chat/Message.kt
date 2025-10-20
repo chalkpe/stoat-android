@@ -332,12 +332,14 @@ fun Message(
                         .fillMaxWidth()
                 ) {
                     if (message.tail == false) {
+                        Spacer(modifier = Modifier.width(10.dp))
                         Column {
                             Spacer(modifier = Modifier.height(4.dp))
                             UserAvatar(
                                 username = User.resolveDefaultName(author),
                                 userId = author.id ?: message.id ?: ULID.makeSpecial(0),
                                 avatar = author.avatar,
+                                size = 30.dp,
                                 rawUrl = if (ignoreServerAvatar) null else authorAvatarUrl(message),
                                 onClick = onAvatarClick
                             )
@@ -348,6 +350,8 @@ fun Message(
 
                     Column(modifier = Modifier.padding(start = 10.dp)) {
                         if (message.tail == false) {
+                            Spacer(modifier = Modifier.height(8.dp))
+
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     text = buildAnnotatedString {
