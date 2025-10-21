@@ -71,6 +71,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -99,6 +100,7 @@ import chat.stoat.composables.screens.chat.ChannelIcon
 import chat.stoat.screens.chat.ChatRouterDestination
 import chat.stoat.screens.chat.LocalIsConnected
 import chat.stoat.sheets.ChannelContextSheet
+import chat.stoat.ui.theme.Colour
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -867,7 +869,7 @@ fun ChannelItem(
 ) {
     CompositionLocalProvider(
         LocalContentColor provides if (isCurrent) {
-            MaterialTheme.colorScheme.onSecondaryContainer
+            MaterialTheme.colorScheme.onSurface
         } else {
             if (hasUnread) {
                 MaterialTheme.colorScheme.onSurface
@@ -899,7 +901,7 @@ fun ChannelItem(
                 )
                 .then(
                     if (isCurrent) {
-                        Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+                        Modifier.background(MaterialTheme.colorScheme.outlineVariant)
                     } else {
                         Modifier
                     }
@@ -911,7 +913,7 @@ fun ChannelItem(
                         Modifier
                     }
                 )
-                .padding(16.dp)
+                .padding(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 6.dp)
                 .fillMaxWidth()) {
             when (iconType) {
                 is ChannelItemIconType.Channel -> {
@@ -941,15 +943,17 @@ fun ChannelItem(
                 },
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                fontSize = if (hasUnread) { 16.sp } else { TextUnit.Unspecified },
+                fontWeight = if (hasUnread) { FontWeight.Bold } else { FontWeight.Normal }
             )
             if (hasUnread && !isCurrent) {
-                Spacer(Modifier.weight(1f))
+//                Spacer(Modifier.weight(1f))
                 Box(
                     Modifier
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                        .requiredSize(8.dp)
+                        .background(Colour.RevoltUltraPink)
+                        .requiredSize(10.dp)
                 )
             }
         }
@@ -965,7 +969,7 @@ fun CategoryItem(
         style = MaterialTheme.typography.labelLarge,
         fontSize = 16.sp,
         modifier = Modifier.padding(
-            start = 24.dp, end = 24.dp, top = 24.dp, bottom = 16.dp
+            start = 24.dp, end = 24.dp, top = 24.dp, bottom = 4.dp
         )
     )
 }
