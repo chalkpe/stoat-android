@@ -42,7 +42,7 @@ fun DateDivider(instant: Instant, modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             HorizontalDivider(
-                modifier = Modifier.width(44.dp),
+                modifier = Modifier.weight(1f),
                 thickness = Dp.Hairline
             )
             Text(
