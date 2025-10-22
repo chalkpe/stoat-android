@@ -55,14 +55,14 @@ import chat.stoat.api.schemas.Channel as ChannelSchema
 
 private const val USE_ALPHA_API = false
 
-val STOAT_BASE = "https://chalk.red/api"
-const val STOAT_SUPPORT = "https://chalk.red"
-const val STOAT_MARKETING = "https://chalk.red"
-val STOAT_FILES = "https://chalk.red/autumn"
-val STOAT_PROXY = "https://chalk.red/january"
-const val STOAT_WEB_APP = "https://chalk.red"
-const val STOAT_INVITES = "https://chalk.red"
-val STOAT_WEBSOCKET = "wss://chalk.red/ws"
+val STOAT_BASE = "https://chalk.plus/api"
+const val STOAT_SUPPORT = "https://chalk.plus"
+const val STOAT_MARKETING = "https://chalk.plus"
+val STOAT_FILES = "https://chalk.plus/autumn"
+val STOAT_PROXY = "https://chalk.plus/january"
+const val STOAT_WEB_APP = "https://chalk.plus"
+const val STOAT_INVITES = "https://chalk.plus"
+val STOAT_WEBSOCKET = "wss://chalk.plus/ws"
 const val STOAT_KJBOOK = "https://stoatchat.github.io/for-android"
 
 fun String.api(): String {
