@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,7 +55,8 @@ enum class Annotations(val tag: String, val clickable: Boolean) {
     UserMention("UserMention", true),
     ChannelMention("ChannelMention", true),
     CustomEmote("CustomEmote", true),
-    Timestamp("Timestamp", false)
+    Timestamp("Timestamp", false),
+    Spoiler("Spoiler", true)
 }
 
 object MarkdownTextRegularExpressions {
@@ -64,13 +66,14 @@ object MarkdownTextRegularExpressions {
     val Timestamp = Regex("<t:([0-9]+?)(:[tTDfFR])?>")
     val UrlFallback =
         Regex("<?https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)>?")
+    val Spoiler = Regex("\\|\\|(.+?)\\|\\|")
 }
 
 /**
  * Visit the AST and its children and return an [AnnotatedString] with the appropriate annotations.
  */
 @Composable
-fun annotateText(node: AstNode): AnnotatedString {
+fun annotateText(node: AstNode, spoilerStates: MutableMap<String, Boolean> = mutableMapOf()): AnnotatedString {
     return buildAnnotatedString {
         when (node.stringType) {
             "text" -> {
@@ -81,8 +84,37 @@ fun annotateText(node: AstNode): AnnotatedString {
                 val customEmotes = MarkdownTextRegularExpressions.CustomEmote.findAll(text)
                 val timestamps = MarkdownTextRegularExpressions.Timestamp.findAll(text)
                 val urls = MarkdownTextRegularExpressions.UrlFallback.findAll(text)
+                val spoilers = MarkdownTextRegularExpressions.Spoiler.findAll(text)
 
                 var lastIndex = 0
+
+                for (spoiler in spoilers) {
+                    try {
+                        append(text.substring(lastIndex, spoiler.range.first))
+                    } catch (e: Exception) {
+                        // no-op
+                    }
+                    
+                    val spoilerId = "${spoiler.range.first}-${spoiler.range.last}-${spoiler.groupValues[1].hashCode()}"
+                    val isRevealed = spoilerStates[spoilerId] ?: false
+                    
+                    pushStringAnnotation(
+                        tag = Annotations.Spoiler.tag,
+                        annotation = spoilerId
+                    )
+                    pushStyle(
+                        LocalTextStyle.current.toSpanStyle()
+                            .copy(
+                                background = if (isRevealed) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.onBackground,
+                                color = if (isRevealed) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onBackground
+                            )
+                    )
+                    append(spoiler.groupValues[1])
+                    pop()
+                    pop()
+                    lastIndex = spoiler.range.last + 1
+                }
+
                 for (mention in mentions) {
                     try {
                         append(text.substring(lastIndex, mention.range.first))
@@ -219,7 +251,7 @@ fun annotateText(node: AstNode): AnnotatedString {
                             fontSynthesis = FontSynthesis.All
                         )
                 )
-                node.children?.forEach { append(annotateText(it)) }
+                node.children?.forEach { append(annotateText(it, spoilerStates)) }
                 pop()
             }
 
@@ -231,7 +263,7 @@ fun annotateText(node: AstNode): AnnotatedString {
                             fontSynthesis = FontSynthesis.All
                         )
                 )
-                node.children?.forEach { append(annotateText(it)) }
+                node.children?.forEach { append(annotateText(it, spoilerStates)) }
                 pop()
             }
 
@@ -246,7 +278,7 @@ fun annotateText(node: AstNode): AnnotatedString {
                             color = MaterialTheme.colorScheme.primary
                         )
                 )
-                node.children?.forEach { append(annotateText(it)) }
+                node.children?.forEach { append(annotateText(it, spoilerStates)) }
                 pop()
                 pop()
             }
@@ -269,7 +301,7 @@ fun annotateText(node: AstNode): AnnotatedString {
             }
 
             else -> {
-                node.children?.forEach { append(annotateText(it)) }
+                node.children?.forEach { append(annotateText(it, spoilerStates)) }
             }
         }
     }
@@ -278,7 +310,8 @@ fun annotateText(node: AstNode): AnnotatedString {
 @Composable
 fun MarkdownText(textNode: AstNode, modifier: Modifier = Modifier) {
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
-    val annotatedText = annotateText(textNode)
+    val spoilerStates = remember { mutableStateMapOf<String, Boolean>() }
+    val annotatedText = annotateText(textNode, spoilerStates)
     val context = LocalContext.current
     val background = MaterialTheme.colorScheme.background
     val scope = rememberCoroutineScope()
@@ -382,6 +415,17 @@ fun MarkdownText(textNode: AstNode, modifier: Modifier = Modifier) {
                 scope.launch {
                     ActionChannel.send(Action.EmoteInfo(annotation.item))
                 }
+
+                return@handler true
+            }
+
+            annotatedText.getStringAnnotations(
+                tag = Annotations.Spoiler.tag,
+                start = offset,
+                end = offset
+            ).firstOrNull()?.let { annotation ->
+                val spoilerId = annotation.item
+                spoilerStates[spoilerId] = !(spoilerStates[spoilerId] ?: false)
 
                 return@handler true
             }
