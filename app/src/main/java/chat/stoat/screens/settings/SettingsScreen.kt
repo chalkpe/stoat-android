@@ -240,28 +240,26 @@ fun SettingsScreen(
                             }
                     )
 
-                    if (BuildConfig.DEBUG) {
-                        ListItem(
-                            headlineContent = {
-                                Text(
-                                    text = "Debug"
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = "Debug"
+                            )
+                        },
+                        leadingContent = {
+                            SettingsIcon {
+                                Icon(
+                                    painter = painterResource(R.drawable.icn_sign_language_24dp),
+                                    contentDescription = null,
                                 )
-                            },
-                            leadingContent = {
-                                SettingsIcon {
-                                    Icon(
-                                        painter = painterResource(R.drawable.icn_sign_language_24dp),
-                                        contentDescription = null,
-                                    )
-                                }
-                            },
-                            modifier = Modifier
-                                .testTag("settings_view_debug")
-                                .clickable {
-                                    navController.navigate("settings/debug")
-                                }
-                        )
-                    }
+                            }
+                        },
+                        modifier = Modifier
+                            .testTag("settings_view_debug")
+                            .clickable {
+                                navController.navigate("settings/debug")
+                            }
+                    )
 
                     if (FeatureFlags.labsAccessControlGranted) {
                         ListItem(
