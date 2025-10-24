@@ -93,7 +93,7 @@ fun EmojiPicker(
 
     val scope = rememberCoroutineScope()
 
-    val spanCount = 9 // https://github.com/googlefonts/emoji-metadata/#readme
+    val spanCount = 4 // https://github.com/googlefonts/emoji-metadata/#readme
 
     // The current category is the one that the user is currently looking at.
     val currentCategory = remember(gridState, categorySpans) {

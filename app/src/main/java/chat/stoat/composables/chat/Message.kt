@@ -440,7 +440,7 @@ fun Message(
                                                 message.content
                                             )
                                                 .let {
-                                                    if (it) 2f else 1f
+                                                    if (it) 8f else 1f
                                                 }
                                         )
                                     ) {
@@ -456,7 +456,7 @@ fun Message(
                                                 message.content
                                             )
                                                 .let {
-                                                    if (it) 2f else 1f
+                                                    if (it) 8f else 1f
                                                 }
                                         )
                                     ) {
