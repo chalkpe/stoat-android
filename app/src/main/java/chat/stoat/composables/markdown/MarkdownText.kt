@@ -66,7 +66,7 @@ object MarkdownTextRegularExpressions {
     val Timestamp = Regex("<t:([0-9]+?)(:[tTDfFR])?>")
     val UrlFallback =
         Regex("<?https?://(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)>?")
-    val Spoiler = Regex("\\|\\|(.+?)\\|\\|")
+    val Spoiler = Regex("\\[\\[(.+?)\\]\\]")
 }
 
 /**
