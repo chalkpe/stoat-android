@@ -116,7 +116,6 @@ object Autocomplete {
 
             ChannelType.TextChannel, ChannelType.VoiceChannel -> {
                 if (serverId == null) return emptyList()
-                if (query.length < 2) return emptyList()
 
                 val roles =
                     if (selfPermissions has PermissionBit.MentionRoles && FeatureFlags.massMentionsGranted) StoatAPI.serverCache[serverId]?.roles
