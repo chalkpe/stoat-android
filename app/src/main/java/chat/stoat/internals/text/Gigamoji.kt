@@ -14,7 +14,7 @@ object Gigamoji {
         // the message is solely custom emotes
         if (content.isBlank()) return true
 
-        if ("[0-9A-Za-z#*]".toRegex()
+        if ("[ㄱ-ㅎㅏ-ㅣ가-힣0-9A-Za-z#*]".toRegex()
                 .containsMatchIn(content)
         ) { // reject common non-emoji characters
             return false
