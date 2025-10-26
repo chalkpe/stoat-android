@@ -726,7 +726,7 @@ fun ColumnScope.DirectMessagesChannelListRenderer(
             Spacer(
                 Modifier.height(
                     WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding()
+                        .calculateBottomPadding().plus(50.dp)
                 )
             )
         }
@@ -820,7 +820,7 @@ fun ColumnScope.ServerChannelListRenderer(
             Spacer(
                 Modifier.height(
                     WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding()
+                        .calculateBottomPadding().plus(50.dp)
                 )
             )
         }
