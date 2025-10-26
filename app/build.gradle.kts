@@ -16,6 +16,7 @@ plugins {
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.google.gms.google-services")
+    id("com.google.firebase.appdistribution")
 }
 
 val composeBomVersion = "2025.03.00"

@@ -8,6 +8,7 @@ plugins {
     id("com.mikepenz.aboutlibraries.plugin") version "11.3.0-rc02" apply false
     id("com.google.devtools.ksp") version "2.2.0-2.0.2" apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
+    id("com.google.firebase.appdistribution") version "5.1.1" apply false
 }
 
 tasks.register<Delete>("clean") {
