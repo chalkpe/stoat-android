@@ -415,44 +415,24 @@ fun ChannelSideDrawer(
                 }
             }
 
-            item(key = "discover") {
+            item(key = "settings") {
                 Box(
                     Modifier
                         .padding(8.dp)
                         .clip(CircleShape)
                         .clickable {
-                            topNav.navigate("discover")
+                            onOpenSettings()
+                            scope.launch {
+                                drawerState?.close()
+                            }
                         }
                         .size(48.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.icn_explore_24dp),
-                        contentDescription = stringResource(R.string.discover_alt)
+                        painter = painterResource(R.drawable.icn_settings_24dp),
+                        contentDescription = stringResource(R.string.settings)
                     )
-                }
-            }
-
-            if (showSettingsIcon) {
-                item(key = "settings") {
-                    Box(
-                        Modifier
-                            .padding(8.dp)
-                            .clip(CircleShape)
-                            .clickable {
-                                onOpenSettings()
-                                scope.launch {
-                                    drawerState?.close()
-                                }
-                            }
-                            .size(48.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.icn_settings_24dp),
-                            contentDescription = stringResource(R.string.settings)
-                        )
-                    }
                 }
             }
         }
