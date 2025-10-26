@@ -116,6 +116,9 @@ android {
                 "\"${buildproperty("build.flavour_id", "RVX_BUILD_FLAVOUR_ID")}\""
             )
             signingConfig = signingConfigs.getByName("debug")
+            firebaseAppDistribution {
+                groups = "friends"
+            }
         }
 
         debug {
